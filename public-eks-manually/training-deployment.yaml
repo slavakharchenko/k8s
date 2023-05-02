@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: training-eks-deployment
+  labels:
+    name: training-eks-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      project: training-eks-deployment
+  template:
+    metadata:
+      labels:
+        project: training-eks-deployment
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:stable
+          ports:
+            - containerPort: 80
+              name: http-web
