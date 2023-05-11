@@ -22,42 +22,19 @@ module "eks" {
   vpc_id     = data.aws_vpc.default_vpc.id
   subnet_ids = data.aws_subnets.default_subnets.ids
 
-  eks_managed_node_groups = {
-    general = {
-      min_size     = 1
-      desired_size = 1
-      max_size     = 2
-
-      instance_types = ["t2.medium"]
-      capacity_type  = "ON_DEMAND"
-      disk_size = 50
-
-      labels = {
-        role = "general"
-      }
+  self_managed_node_groups = {
+    training_self_nodes = {
+      name          = "training-self-mng"
+      ami_id        = "ami-0db939bf834b05dd4"
+      instance_type = "t2.medium"
+      desired_size  = 2
+      max_size      = 3
     }
   }
 
-  # aws-auth configmap
+  # Self managed node groups will not automatically create the aws-auth configmap so we need to
+  create_aws_auth_configmap = true
   manage_aws_auth_configmap = true
-
-  ## TODO try to create role for eks admin
-  #  aws_auth_roles = [
-  #    {
-  #      rolearn  = "arn:aws:iam::930050429294:policy/custom-eks-admin"
-  #      username = "custom-eks-admin"
-  #      groups   = ["system:masters"]
-  #    },
-  #  ]
-
-  ## For root user if it necessary
-  #  aws_auth_users = [
-  #    {
-  #      userarn  = "arn:aws:iam::930050429294:root"
-  #      username = "root"
-  #      groups   = ["system:masters"]
-  #    },
-  #  ]
 
   aws_auth_users = [
     {
